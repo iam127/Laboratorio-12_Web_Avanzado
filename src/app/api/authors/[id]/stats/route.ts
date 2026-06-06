@@ -42,9 +42,9 @@ export async function GET(
     const firstBook = sortedByYear[0]
     const latestBook = sortedByYear[sortedByYear.length - 1]
 
-    const booksWithPages = books.filter(b => b.pages !== null)
+    const booksWithPages = books.filter((b: any) => b.pages !== null)
     const averagePages = booksWithPages.length > 0
-      ? Math.round(booksWithPages.reduce((sum, b) => sum + (b.pages || 0), 0) / booksWithPages.length)
+      ? Math.round(booksWithPages.reduce((sum: number, b: any) => sum + (b.pages || 0), 0) / booksWithPages.length)
       : 0
 
     const genres = [...new Set(books.map(b => b.genre).filter(Boolean))]
