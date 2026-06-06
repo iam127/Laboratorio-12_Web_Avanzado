@@ -10,19 +10,14 @@ export async function GET(
 
     const author = await prisma.author.findUnique({
       where: { id },
-      include: {
-        books: true
-      }
+      include: { books: true }
     })
 
     if (!author) {
-      return NextResponse.json(
-        { error: 'Autor no encontrado' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: 'Autor no encontrado' }, { status: 404 })
     }
 
-    const books = author.books
+    const books = author.books as any[]
 
     if (books.length === 0) {
       return NextResponse.json({
@@ -38,7 +33,7 @@ export async function GET(
       })
     }
 
-    const sortedByYear = [...books].sort((a, b) => (a.publishedYear || 0) - (b.publishedYear || 0))
+    const sortedByYear = [...books].sort((a: any, b: any) => (a.publishedYear || 0) - (b.publishedYear || 0))
     const firstBook = sortedByYear[0]
     const latestBook = sortedByYear[sortedByYear.length - 1]
 
@@ -47,9 +42,9 @@ export async function GET(
       ? Math.round(booksWithPages.reduce((sum: number, b: any) => sum + (b.pages || 0), 0) / booksWithPages.length)
       : 0
 
-    const genres = [...new Set(books.map(b => b.genre).filter(Boolean))]
+    const genres = [...new Set(books.map((b: any) => b.genre).filter(Boolean))]
 
-    const sortedByPages = [...booksWithPages].sort((a, b) => (b.pages || 0) - (a.pages || 0))
+    const sortedByPages = [...booksWithPages].sort((a: any, b: any) => (b.pages || 0) - (a.pages || 0))
     const longestBook = sortedByPages[0] || null
     const shortestBook = sortedByPages[sortedByPages.length - 1] || null
 
@@ -65,9 +60,6 @@ export async function GET(
       shortestBook: shortestBook ? { title: shortestBook.title, pages: shortestBook.pages } : null,
     })
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Error al obtener estadísticas' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Error al obtener estadísticas' }, { status: 500 })
   }
 }
